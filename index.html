@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Birthday Surprise</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:"Poppins",sans-serif;
+}
+body{
+    background:#c71585;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    position:relative;
+    background-image: url(page1-bg.jpg);
+    background-size: cover;
+}
+
+/* BLACK BACKGROUND FOR INTRO */
+#intro{
+    position:absolute;
+    inset:0;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:20;
+    overflow:hidden;
+}
+
+/* INTRO TEXT */
+.intro-text{
+    position:absolute;
+    font-size:32px;
+    font-weight:600;
+    font-family: Georgia, 'Times New Roman', Times, serif, Helvetica, sans-serif;
+    color:#fff;
+    opacity:0;
+    transform:translateX(-120%);
+    white-space:nowrap;
+}
+#guess{
+    height: 70px;
+    width: 200px;
+    background-color: rgb(255, 255, 255);
+    font-size:24px;border-radius:50px;border:none;cursor:pointer;background:linear-gradient(45deg,#702419,#fc0202);color:#fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+#or{
+    background-color: red;
+    margin-top: 10px;
+    border-radius: 20px;
+}
+
+/* SLIDE IN → DROP OUT */
+@keyframes slideInDropOut{
+    0%{opacity:0; transform:translateX(-120%) translateY(0);}
+    30%{opacity:1; transform:translateX(0) translateY(0);}
+    60%{opacity:1; transform:translateX(0) translateY(0);}
+    100%{opacity:0; transform:translateX(0) translateY(120vh);}
+}
+
+/* Countdown styling */
+#cooldown {
+    display: none;
+    width: 90%;
+    max-width: 360px;
+    background: #fff;
+    border-radius: 25px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 15px 30px rgba(0,0,0,.35);
+}
+.cd-title{font-size:18px;color:#c71585;margin-bottom:15px;}
+.time-boxes{display:flex;gap:10px;margin-bottom:15px;}
+.time-box{flex:1;background:#ffe6f2;border-radius:16px;padding:12px 5px;}
+.time-box span{display:block;font-size:26px;font-weight:700;color:#c71585;}
+.time-box p{font-size:12px;color:#8b0055;}
+.cd-message{background:#fff0f7;border-radius:15px;padding:12px;font-size:14px;color:#8b0055;}
+
+/* BLACK PAGE */
+#forYouPage{
+    display:none;
+    position:absolute;
+    inset:0;
+    background:#000;
+    color:#fff;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    gap:25px;
+    z-index:10;
+}
+.sprinkles{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:5;
+}
+.sprinkle{
+    position:absolute;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    opacity:0.9;
+    animation:fallSprinkle linear infinite;
+}
+@keyframes fallSprinkle{
+    0%{transform: translateY(-10px); opacity:1;}
+    100%{transform: translateY(100vh); opacity:0;}
+}
+.gift-icon{
+    width:130px;
+    height:130px;
+    border-radius:50%;
+    background:linear-gradient(135deg,#ff4fd8,#7b5cff);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:48px;
+    color:white;
+    animation:pulse 2s infinite;
+}
+@keyframes pulse{
+    0%{transform:scale(1)}
+    50%{transform:scale(1.08)}
+    100%{transform:scale(1)}
+}
+#letsCelebrate{
+    padding:14px 40px;
+    border:none;
+    border-radius:50px;
+    font-size:20px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* PAGE2 */
+#page2{
+    margin:0;
+    padding:0;
+    background:url("page2-bg.jpg") no-repeat center center/cover;
+    font-family:'Poppins',sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    position:absolute;
+    inset:0;
+    flex-direction:column;
+    display:none;
+}
+
+/* Fireworks container */
+#fireworks-container{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:2;
+    display:none;
+}
+
+/* Balloons container */
+.balloons{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    display:none;
+}
+.balloons span{
+    position:absolute;
+    bottom:-40px;
+    font-size:26px;
+    animation:floatUp linear forwards;
+    opacity:0.8;
+}
+@keyframes floatUp{
+    0%{transform:translateY(0) scale(0.8); opacity:0;}
+    10%{opacity:1;}
+    100%{transform:translateY(-120vh) scale(1.2); opacity:0;}
+}
+
+/* Floating stickers around card */
+.card-stickers span{
+    position:absolute;
+    font-size:22px;
+    animation:floatAround 4s linear forwards;
+    opacity:0.9;
+}
+@keyframes floatAround{
+    0%{transform:translateY(0) rotate(0deg); opacity:0;}
+    10%{opacity:1;}
+    100%{transform:translateY(-120px) rotate(360deg); opacity:0;}
+}
+
+/* Card */
+.card{
+    width:92%;
+    max-width:380px;
+    background:#fff;
+    border-radius:32px;
+    padding:30px 20px 45px;
+    text-align:center;
+    box-shadow:0 25px 45px rgba(0,0,0,.35);
+    position:relative;
+    z-index:3;
+    animation:cardPop .6s ease;
+}
+@keyframes cardPop{
+    from{transform:scale(.85);opacity:0}
+    to{transform:scale(1);opacity:1}
+}
+
+/* Happy Birthday image */
+#H-B{
+    width:170px;
+    height:95px;
+    margin:0 auto 22px;
+    background:url("happy-2.png") no-repeat center/contain;
+}
+
+/* Tap Button */
+.tapArea{
+    width:85%;
+    margin:5px auto 18px;
+    padding:28px 12px;
+    background:linear-gradient(135deg,#4facfe,#8f7bff);
+    border-radius:24px;
+    color:white;
+    font-size:17px;
+    font-weight:600;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    transform:rotate(-5deg);
+    box-shadow:0 15px 30px rgba(79,172,254,.55);
+    position:relative;
+    overflow:hidden;
+    animation:pulse 2.5s infinite;
+}
+.tapArea::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,.4),transparent);
+    animation:shine 2s infinite;
+}
+@keyframes shine{
+    from{transform:translateX(-100%)}
+    to{transform:translateX(100%)}
+}
+.tapArea i{
+    font-size:28px;
+}
+
+/* Message */
+.message{
+    display:none;
+    margin-top:14px;
+    font-size:15px;
+    color:#7a006a;
+    line-height:1.7;
+    padding:0 8px;
+    animation:fadeIn .6s ease forwards;
+}
+@keyframes fadeIn{
+    from{opacity:0;transform:scale(.95)}
+    to{opacity:1;transform:scale(1)}
+}
+
+/* Card heart */
+.card::after{
+    content:"💖";
+    position:absolute;
+    bottom:12px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:26px;
+    animation:heartBeat 1.5s infinite;
+}
+@keyframes heartBeat{
+    0%,100%{transform:translateX(-50%) scale(1)}
+    50%{transform:translateX(-50%) scale(1.2)}
+}
+
+/* Fireworks animation */
+.firework{
+    position:absolute;
+    font-size:24px;
+    pointer-events:none;
+    animation:explode 1s ease-out forwards;
+}
+@keyframes explode{
+    0%{transform:scale(0); opacity:1;}
+    50%{transform:scale(1.5); opacity:1;}
+    100%{transform:scale(0); opacity:0;}
+}
+
+/* Header */
+.header {
+    position: absolute;
+    top: 100px;
+    width:80%;
+    height: 40px;
+    text-align:center;
+    font-size:24px;
+    color:#fff;
+    font-weight:600;
+    text-shadow: 1px 1px 5px #000;
+    z-index:2;
+    background-color: rgb(255, 0, 0,0.3);
+    border-radius: 10px;
+}
+
+/* Balloon image */
+#baloon-1{
+    height: 230px;
+    width: 230px;
+    background-color:transparent;
+    position: fixed;
+    bottom: 30px;
+    background-image: url(baloon-fixed.png);
+    background-size: contain;
+}
+
+/* Beauty Loader */
+.loader-box{
+    width:320px;
+    height:230px;
+    border-radius:16px;
+    background:linear-gradient(135deg,#667eea,#764ba2);
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    text-align:center;
+    margin-top:20px;
+}
+h3{
+    margin-bottom:15px;
+    font-size:20px;
+}
+.progress{
+    font-size:30px;
+    font-weight:bold;
+    display:none;
+    animation:pulse 1s infinite;
+}
+button.loader-btn{
+    margin-top:15px;
+    padding:10px 25px;
+    border:none;
+    border-radius:25px;
+    font-size:15px;
+    cursor:pointer;
+    background:linear-gradient(135deg,#ff512f,#f09819);
+    color:white;
+    font-weight:bold;
+    transition:0.3s;
+}
+button.loader-btn:hover{transform:scale(1.05);}
+.error{
+    display:none;
+    font-size:20px;
+    font-weight:bold;
+    color:#ffeb3b;
+    animation:shake 0.5s infinite;
+}
+@keyframes shake{
+    0%{transform:translateX(0)}
+    25%{transform:translateX(-5px)}
+    50%{transform:translateX(5px)}
+    75%{transform:translateX(-5px)}
+    100%{transform:translateX(0)}
+}
+</style>
+</head>
+<body>
+<!-- START BUTTON OVERLAY -->
+<div id="startPage" style="position:absolute;inset:0;background:#c71585;display:flex;justify-content:center;align-items:center;flex-direction:column;z-index:50;">
+    <h2 id="guess">Guess what</h2>
+    <h3 id="or">or</h3>
+    <button id="startBtn" style="padding:20px 40px;font-size:24px;border-radius:50px;border:none;cursor:pointer;background:linear-gradient(45deg,#ff4fd8,#7b5cff);color:#fff;">
+        tap here🎉
+    </button>
+</div>
+
+<!-- INTRO TEXT SEQUENCE -->
+<div id="intro">
+    <div class="intro-text">Ohhh! 😮</div>
+    <div class="intro-text">It's 16 December 🎂</div>
+    <div class="intro-text"> A Beautiful 💖</div>
+    <div class="intro-text">Person's Birthday 🎉</div>
+</div>
+
+<!-- Countdown -->
+<div id="cooldown">
+    <div class="cd-title">Your Special Day is Almost Here 💖</div>
+    <div class="time-boxes">
+        <div class="time-box"><span>0</span><p>Days 💕</p></div>
+        <div class="time-box"><span>0</span><p>Hours 🎁</p></div>
+        <div class="time-box"><span>0</span><p>Minutes 🎂</p></div>
+        <div class="time-box"><span id="seconds">5</span><p>Seconds ⭐</p></div>
+    </div>
+    <div class="cd-message">
+        Just a little more…<br>A small gift for you💗
+    </div>
+</div>
+
+<!-- BLACK PAGE -->
+<div id="forYouPage">
+    <div class="sprinkles"></div>
+    <div class="gift-icon">🎁</div>
+    <h1>Time to Celebrate 🎉</h1>
+    <button id="letsCelebrate">Let’s Celebrate ✨</button>
+</div>
+
+<!-- AUDIO -->
+<audio id="birthdaySong" src="song.mp3" autoplay loop></audio>
+
+<!-- PAGE2 -->
+<div id="page2">
+    <div class="header">🎉 Happy Birthday 🎉</div>
+    <div id="fireworks-container"></div>
+    <div class="balloons"></div>
+    <div class="card">
+        <div id="H-B"></div>
+        <div class="card-stickers"></div>
+        <div class="tapArea" id="tapArea">
+            <div>Tap to open your card</div>
+            <i>🎁</i>
+        </div>
+        <div class="message" id="message">
+          Happy  Birthday 🎉
+Hope this year reminds you how special you truly are.
+Your smile, your vibe, and the way you makes every day a little brighter.
+You’re special in a way that doesn’t need words—hope you feel it today.💕✨
+        </div>
+    </div>
+    <div class="loader-box">
+        <h3 id="loader-title">💖 Measure Your Beauty</h3>
+        <div class="progress" id="progress">0%</div>
+        <div class="error" id="error">⚠ BEAUTY OVERLOADED!</div>
+        <button class="loader-btn" id="btn">Start</button>
+    </div>
+    
+</div>
+
+<script>
+// Intro animation
+const intro = document.getElementById("intro");
+const texts = document.querySelectorAll(".intro-text");
+const cooldown = document.getElementById("cooldown");
+const forYouPage = document.getElementById("forYouPage");
+const secEl = document.getElementById("seconds");
+const startBtn = document.getElementById("startBtn");
+const startPage = document.getElementById("startPage");
+const birthdaySong = document.getElementById("birthdaySong");
+let index = 0;
+function playIntroText() {
+    if(index>=texts.length){ intro.style.display="none"; startCountdown(); return; }
+    texts[index].style.animation="slideInDropOut 2.8s forwards";
+    index++;
+    setTimeout(playIntroText,3000);
+}
+function startCountdown(){
+    cooldown.style.display="block";
+    let sec = 5;
+    secEl.innerText=sec;
+    const timer = setInterval(()=>{
+        sec--; secEl.innerText=sec;
+        if(sec===0){ clearInterval(timer); cooldown.style.display="none"; forYouPage.style.display="flex"; createSprinkles(60); }
+    },1000);
+}
+function createSprinkles(count){
+    const container = document.querySelector(".sprinkles");
+    const colors = ["#ff4fd8","#7b5cff","#ffea4f","#4fffab","#ff6b6b"];
+    for(let i=0;i<count;i++){
+        const s=document.createElement("span");
+        s.className="sprinkle";
+        s.style.left=Math.random()*100+"%";
+        s.style.backgroundColor=colors[Math.floor(Math.random()*colors.length)];
+        const size=4+Math.random()*6;
+        s.style.width=size+"px"; s.style.height=size+"px";
+        s.style.animationDuration=3+Math.random()*2+"s";
+        s.style.animationDelay=Math.random()*2+"s";
+        container.appendChild(s);
+    }
+}
+startBtn.addEventListener("click",()=>{startPage.style.display="none"; birthdaySong.play(); playIntroText();});
+document.getElementById("letsCelebrate").addEventListener("click",()=>{
+    forYouPage.style.display="none";
+    document.getElementById("page2").style.display="flex";
+    birthdaySong.play();
+});
+
+// PAGE2 JS
+const tapArea=document.getElementById("tapArea");
+const message=document.getElementById("message");
+const fireworksContainer=document.getElementById("fireworks-container");
+const balloonsContainer=document.querySelector(".balloons");
+const cardStickersContainer=document.querySelector(".card-stickers");
+
+tapArea.onclick=()=>{
+    tapArea.style.display="none";
+    message.style.display="block";
+    fireworksContainer.style.display="block";
+    balloonsContainer.style.display="block";
+    const fireworkInterval=setInterval(spawnFirework,500);
+    setTimeout(()=>clearInterval(fireworkInterval),10000);
+    spawnBalloons(50);
+    setInterval(()=>spawnBalloons(10),500);
+    spawnCardStickers(30);
+};
+function spawnFirework(){
+    const firework=document.createElement("div");
+    firework.className="firework";
+    const emojis=["✨","💥","🎆","🎇","💫"];
+    firework.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+    firework.style.left=Math.random()*(window.innerWidth-30)+"px";
+    firework.style.top=Math.random()*150+"px";
+    fireworksContainer.appendChild(firework);
+    setTimeout(()=>firework.remove(),1000);
+}
+function spawnBalloons(count){
+    const emojis=["🎈","🎉","💖","🎁","✨"];
+    for(let i=0;i<count;i++){
+        const span=document.createElement("span");
+        span.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+        span.style.left=Math.random()*90+"%";
+        span.style.animationDuration=(4+Math.random()*3)+"s";
+        balloonsContainer.appendChild(span);
+        setTimeout(()=>span.remove(),7000);
+    }
+}
+function spawnCardStickers(count){
+    const emojis=["💖","✨","🎉","🎈","💝"];
+    for(let i=0;i<count;i++){
+        const span=document.createElement("span");
+        span.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+        span.style.left=Math.random()*80+"%";
+        span.style.top=Math.random()*100+"px";
+        span.style.animationDuration=(3+Math.random()*2)+"s";
+        cardStickersContainer.appendChild(span);
+        setTimeout(()=>span.remove(),4000);
+    }
+}
+
+// BEAUTY LOADER
+const loaderBtn=document.getElementById("btn");
+const loaderTitle=document.getElementById("loader-title");
+const progress=document.getElementById("progress");
+const error=document.getElementById("error");
+loaderBtn.onclick=function(){
+    let percent=0;
+    loaderBtn.style.display="none"; loaderTitle.style.display="none"; error.style.display="none"; progress.style.display="block";
+    const interval=setInterval(()=>{
+        percent+=10; progress.innerText=percent+"%";
+        if(percent>=120){ clearInterval(interval); progress.style.display="none"; error.style.display="block"; }
+    },350);
+};
+</script>
+</body>
+</html>
